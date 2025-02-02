@@ -7,6 +7,11 @@ if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
 
 def login():
+    if st.session_state.logged_in:
+        st.switch_page("dashboard")  # Use switch_page instead of direct call
+        return
+    if 'page' not in st.session_state:
+        st.session_state.page = "login"
     st.set_page_config(page_title="QuickCram+", page_icon="📚", layout="wide")
     
     if st.session_state.logged_in:

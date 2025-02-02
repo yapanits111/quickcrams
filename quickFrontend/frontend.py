@@ -20,6 +20,7 @@ def login_user(credentials):
         return False, str(e)
 
 def post_data(endpoint, data):
+    check_auth()
     try:
         headers = {"Authorization": f"Bearer {st.session_state.get('token', '')}"}
         response = requests.post(f"{BASE_URL}/{endpoint}", json=data, headers=headers)
@@ -30,6 +31,7 @@ def post_data(endpoint, data):
         return False, str(e)
 
 def fetch_data(endpoint):
+    check_auth()
     try:
         headers = {"Authorization": f"Bearer {st.session_state.get('token', '')}"}
         response = requests.get(f"{BASE_URL}/{endpoint}", headers=headers)
@@ -40,6 +42,7 @@ def fetch_data(endpoint):
         return []
 
 def delete_data(endpoint):
+    check_auth()
     try:
         headers = {"Authorization": f"Bearer {st.session_state.get('token', '')}"}
         response = requests.delete(f"{BASE_URL}/{endpoint}", headers=headers)
@@ -48,9 +51,15 @@ def delete_data(endpoint):
         return False, str(e)
 
 def update_data(endpoint, data):
+    check_auth()
     try:
         headers = {"Authorization": f"Bearer {st.session_state.get('token', '')}"}
         response = requests.put(f"{BASE_URL}/{endpoint}", json=data, headers=headers)
         return response.status_code == 200, response.json()
     except Exception as e:
         return False, str(e)
+    
+def check_auth():
+    if 'token' not in st.session_state:
+        st.session_state.page = "login"
+        st.rerun()

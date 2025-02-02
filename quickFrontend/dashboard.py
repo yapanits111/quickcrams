@@ -6,6 +6,10 @@ from login import login
 
 # Home Page
 def dashboard():
+    if 'logged_in' not in st.session_state:
+        st.session_state.logged_in = False
+        st.session_state.page = "login"
+        st.rerun()
 
     # Page Configuration
     st.set_page_config(page_title="QuickCram+", page_icon="📚", layout="wide")
@@ -38,14 +42,11 @@ def dashboard():
                 login() 
 
         if page == "Notes":
-            st.title("Notes")
-            notes()
+            notes()  # Remove duplicate title
         elif page == "Flashcards":
-            st.title("Flashcards")
-            flashcard()
+            flashcard()  # Remove duplicate title
         elif page == "Quizzes":
-            st.title("Quizzes")
-            quiz()
+            quiz()  # Remove duplicate title
 
 if __name__ == "__main__":
     dashboard()
