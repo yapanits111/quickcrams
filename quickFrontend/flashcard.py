@@ -27,6 +27,6 @@ def flashcard():
             st.write(f"**Card {i}**")
             st.write(f"**Q:** {card['front']}")
             st.write(f"**A:** {card['back']}")
-            st.write("---")
+
     else:
         st.info("No flashcards created yet.")
