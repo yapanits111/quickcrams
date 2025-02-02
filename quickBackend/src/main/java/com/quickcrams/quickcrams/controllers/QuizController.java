@@ -4,11 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.quickcrams.quickcrams.models.Quiz;
 import com.quickcrams.quickcrams.models.QuizResult;
@@ -17,6 +13,7 @@ import com.quickcrams.quickcrams.repositories.QuizResultRepository;
 
 @RestController
 @RequestMapping("/api/quiz")
+@CrossOrigin(origins = "http://localhost:8501") // Allow specific frontend origin
 public class QuizController {
 
     @Autowired
@@ -25,21 +22,31 @@ public class QuizController {
     @Autowired
     private QuizResultRepository quizResultRepository;
 
+    // Create a new quiz
     @PostMapping
-    public ResponseEntity<String> createQuiz(@RequestBody Quiz quiz) {
-        quizRepository.save(quiz); // Save quiz to the database
-        return ResponseEntity.ok("Quiz created");
+    public ResponseEntity<Quiz> createQuiz(@RequestBody Quiz quiz) {
+        Quiz savedQuiz = quizRepository.save(quiz);
+        return ResponseEntity.ok(savedQuiz);
     }
 
+    // Get all quizzes
+    @GetMapping
+    public ResponseEntity<List<Quiz>> getAllQuizzes() {
+        List<Quiz> quizzes = quizRepository.findAll();
+        return ResponseEntity.ok(quizzes);
+    }
+
+    // Submit quiz results
     @PostMapping("/results")
-    public ResponseEntity<String> submitQuizResults(@RequestBody QuizResult quizResult) {
-        quizResultRepository.save(quizResult); // Save quiz results to the database
-        return ResponseEntity.ok("Quiz results submitted");
+    public ResponseEntity<QuizResult> submitQuizResults(@RequestBody QuizResult quizResult) {
+        QuizResult savedResult = quizResultRepository.save(quizResult);
+        return ResponseEntity.ok(savedResult);
     }
 
+    // Get all quiz results
     @GetMapping("/results")
     public ResponseEntity<List<QuizResult>> getQuizResults() {
-        List<QuizResult> results = quizResultRepository.findAll(); // Retrieve quiz results
+        List<QuizResult> results = quizResultRepository.findAll();
         return ResponseEntity.ok(results);
     }
 }
