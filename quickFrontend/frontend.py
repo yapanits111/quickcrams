@@ -1,7 +1,8 @@
 import streamlit as st
 import requests
 
-BASE_URL = "http://localhost:8080"
+BASE_URL = "http://localhost:8080"  # Use the backend port
+
 
 # Helper Function to Post Data to Backend
 def post_data(endpoint, data):
