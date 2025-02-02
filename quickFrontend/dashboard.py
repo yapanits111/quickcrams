@@ -2,7 +2,6 @@ import streamlit as st
 from notes import notes
 from flashcard import flashcard
 from quiz import quiz
-from schedule import schedule
 
 # Home Page
 def dashboard():
@@ -29,7 +28,6 @@ if st.session_state.logged_in:
         - **Notes**: Create and organize your study notes.
         - **Flashcards**: Build and review flashcards for quick revision.
         - **Quizzes**: Test your knowledge with custom quizzes.
-        - **Study Schedule**: Plan your study sessions efficiently.
         """)
 
         logout = st.button("Logout") 
@@ -43,6 +41,6 @@ if st.session_state.logged_in:
     elif page == "Quizzes":
         st.title("Quizzes")
         quiz()
-    elif page == "Study Schedule":
-        st.title("Study Schedule")
-        schedule()
+
+if __name__ == "__main__":
+    dashboard()

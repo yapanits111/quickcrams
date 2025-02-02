@@ -32,3 +32,6 @@ def login():
     st.write("Don't have an account?")
     if st.button("Sign Up"):
         signup()
+        
+if __name__ == "__main__":
+    login()

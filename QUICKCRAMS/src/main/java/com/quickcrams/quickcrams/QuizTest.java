@@ -21,19 +21,19 @@ public class QuizTest implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-    // Create a new Quiz
-    Quiz quiz = new Quiz();
-    quiz.setQuestions("Sample Question");
-    quiz.setChoices(Arrays.asList("Choice 1", "Choice 2", "Choice 3"));
-    quiz.setAnswer("Choice 1");
+        // Create a new Quiz
+        Quiz quiz = new Quiz();
+        quiz.setQuestions("Sample Question");
+        quiz.setChoices(Arrays.asList("Choice 1", "Choice 2", "Choice 3"));
+        quiz.setAnswer("Choice 1");
 
-    // Save the Quiz to the database
-    quizRepository.save(quiz);
+        // Save the Quiz to the database
+        quizRepository.save(quiz);
 
-    // Fetch and output the saved Quiz
-    Quiz savedQuiz = quizRepository.findById(quiz.getId()).orElse(null);
-    System.out.println("Quiz created: Questions = " + savedQuiz.getQuestions() +
-        ", Choices = " + savedQuiz.getChoices() + ", Answer = " + savedQuiz.getAnswer());
-}
+        // Fetch and output the saved Quiz
+        Quiz savedQuiz = quizRepository.findById(quiz.getId()).orElse(null);
+        System.out.println("Quiz created: Questions = " + savedQuiz.getQuestions() +
+                ", Choices = " + savedQuiz.getChoices() + ", Answer = " + savedQuiz.getAnswer());
+    }
 
 }

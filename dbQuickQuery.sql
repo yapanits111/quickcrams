@@ -4,11 +4,22 @@ CREATE DATABASE cramsdb;
 -- Use the newly created database
 USE cramsdb;
 
--- Create User Table
 CREATE TABLE User (
     userId BIGINT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(255) NOT NULL UNIQUE,
+    firstName VARCHAR(255) NOT NULL,
+    lastName VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE Quiz (
+    quizId BIGINT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    question TEXT NOT NULL,
+    choices JSON NOT NULL,
+    correctOption VARCHAR(255) NOT NULL,
+    userId BIGINT,
+    FOREIGN KEY (userId) REFERENCES User(userId)
 );
 
 -- Create Quiz Table
@@ -45,16 +56,3 @@ CREATE TABLE Note (
     noteTitle VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE Role (
-    roleId BIGINT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL UNIQUE
-);
-
-CREATE TABLE UserRoles (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    user_id BIGINT NOT NULL,
-    role_id BIGINT NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES User(userId) ON DELETE CASCADE,
-    FOREIGN KEY (role_id) REFERENCES Role(roleId) ON DELETE CASCADE,
-    CONSTRAINT user_role_unique UNIQUE (user_id, role_id) -- Prevents duplicate entries
-);

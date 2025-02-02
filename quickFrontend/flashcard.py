@@ -30,3 +30,6 @@ def flashcard():
 
     else:
         st.info("No flashcards created yet.")
+
+if __name__ == "__main__":
+    flashcard() 

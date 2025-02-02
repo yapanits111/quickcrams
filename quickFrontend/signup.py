@@ -1,6 +1,6 @@
 import streamlit as st
-import login as login
-
+from login import login
+    
 def signup():
     st.title("Sign Up")
     firstName = st.text_input("First Name")
@@ -22,6 +22,7 @@ def signup():
 
     st.write("Already have an account?")
     if st.button("Login"):
-        login.login()  # This will refresh the page, you can replace it with actual login page redirection
+        login()  # This will refresh the page, you can replace it with actual login page redirection
 
-signup()
+if __name__ == "__main__":
+    signup()

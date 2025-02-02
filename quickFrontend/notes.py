@@ -28,3 +28,6 @@ def notes():
                 requests.delete(f"{BASE_URL}/notes/{note['id']}")
     else:
         st.info("No notes saved yet.")
+
+if __name__ == "__main__":
+    notes()
