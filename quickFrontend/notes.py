@@ -1,33 +1,60 @@
 import streamlit as st
-import requests
-from frontend import *
+from frontend import post_data, fetch_data, delete_data
 
-# Notes Page
 def notes():
     st.title("📝 Notes")
-    st.write("Create and manage your study notes here.")
-    # Add a text area to see created notes
-    viewNotes = st.text_area(notes)
-
-
-    # Input for New Note
-    new_note = st.text_area("Add a new note:")
-    if st.button("Save Note"):
-        if new_note:
-            post_data("notes", {"content": new_note})
+    
+    if st.button("Back to Dashboard"):
+        st.session_state.page = "dashboard"
+        st.rerun()
+    
+    tab1, tab2 = st.tabs(["My Notes", "Create Note"])
+    
+    with tab1:
+        st.header("My Notes")
+        notes = fetch_data("notes")
+        
+        if notes:
+            for note in notes:
+                with st.expander(f"Note: {note['title']}"):
+                    st.write(note['content'])
+                    if note['userId'] == st.session_state.user['id']:
+                        if st.button("Delete", key=f"delete_{note['noteId']}"):
+                            if st.button("Confirm Delete?", key=f"confirm_{note['noteId']}"):
+                                success, message = delete_data(f"notes/{note['noteId']}")
+                                if success:
+                                    st.success("Note deleted!")
+                                    st.rerun()
+                                else:
+                                    st.error(message)
         else:
-            st.warning("Please enter a note before saving.")
+            st.info("No notes yet. Create one in the 'Create Note' tab!")
 
-    # Display Saved Notes
-    st.subheader("Your Notes")
-    notes = fetch_data("notes")
-    if notes:
-        for i, note in enumerate(notes, 1):
-            st.write(f"{i}. {note['content']}")
-            if st.button(f"Delete Note {i}", key=f"delete_{i}"):
-                requests.delete(f"{BASE_URL}/notes/{note['id']}")
-    else:
-        st.info("No notes saved yet.")
+    with tab2:
+        st.header("Create New Note")
+        with st.form("note_form"):
+            title = st.text_input("Title")
+            content = st.text_area("Content")
+            
+            if st.form_submit_button("Save Note"):
+                if title and content:
+                    note_data = {
+                        "title": title,
+                        "content": content,
+                        "userId": st.session_state.user['id']
+                    }
+                    success, message = post_data("notes", note_data)
+                    if success:
+                        st.success("Note saved successfully!")
+                        st.rerun()
+                    else:
+                        st.error(message)
+                else:
+                    st.error("Please fill in all fields")
 
 if __name__ == "__main__":
+    if 'user' not in st.session_state:
+        st.error("Please login first!")
+        st.session_state.page = "login"
+        st.rerun()
     notes()

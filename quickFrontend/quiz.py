@@ -47,7 +47,7 @@ def quiz():
                             "score": total_score
                         })
                     
-                    # Delete option for quiz owner
+                    # Delete option
                     if 'user' in st.session_state and quiz['userId'] == st.session_state.user['id']:
                         if st.button("Delete Quiz", key=f"delete_{quiz['quizId']}"):
                             if st.button("Confirm Delete?", key=f"confirm_{quiz['quizId']}"):
@@ -67,7 +67,6 @@ def quiz():
         if 'num_questions' not in st.session_state:
             st.session_state.num_questions = 1
 
-        # Quiz title
         title = st.text_input("Quiz Title")
         
         # Add/remove question buttons

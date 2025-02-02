@@ -6,7 +6,7 @@ BASE_URL = "http://localhost:8080/api"
 def register_user(user_data):
     try:
         response = requests.post(f"{BASE_URL}/users/register", json=user_data)
-        return response.status_code == 201, response.json().get('message', 'Error occurred')
+        return response.status_code == 201, response.json().get('message') # 201 indicates successful resource creation
     except Exception as e:
         return False, str(e)
 
