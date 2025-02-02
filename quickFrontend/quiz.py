@@ -51,7 +51,7 @@ def quiz():
                     if 'user' in st.session_state and quiz['userId'] == st.session_state.user['id']:
                         if st.button("Delete Quiz", key=f"delete_{quiz['quizId']}"):
                             if st.button("Confirm Delete?", key=f"confirm_{quiz['quizId']}"):
-                                success, message = delete_quiz(f"quiz/{quiz['quizId']}")
+                                success, message = delete_data(f"quiz/{quiz['quizId']}")
                                 if success:
                                     st.success("Quiz deleted successfully!")
                                     st.rerun()
