@@ -1,71 +1,76 @@
 import streamlit as st
-import requests
+from frontend import post_data, fetch_data
 
-
-API_URL = "http://localhost:8080/api/quiz"  # Make sure this matches your backend port
-
-# Function to fetch quizzes
-def fetch_data():
-    try:
-        response = requests.get(API_URL)
-        if response.status_code == 200:
-            return response.json()
-        return []
-    except requests.exceptions.RequestException as e:
-        st.error(f"Error fetching quizzes: {e}")
-        return []
-
-# Function to post new quiz
-def post_data(question, choices, correct_option):
-    payload = {
-        "question": question,
-        "choices": choices,  # `choices` is already a list
-        "correctOption": correct_option
-    }
-
-    try:
-        response = requests.post(API_URL, json=payload)
-        if response.status_code == 200:
-            st.success("Quiz added successfully!")
-        else:
-            st.error("Failed to add quiz.")
-    except requests.exceptions.RequestException as e:
-        st.error(f"Error posting quiz: {e}")
-
-# Streamlit UI
 def quiz():
-    st.title("📝 Quizzes")
+    st.title("📝 Quiz Application")
     
-    # Input for New Quiz Question
-    st.subheader("Add a Quiz Question")
-    question = st.text_input("Question:")
-    option1 = st.text_input("Option 1:")
-    option2 = st.text_input("Option 2:")
-    option3 = st.text_input("Option 3:")
-    option4 = st.text_input("Option 4:")
-    correct_option = st.selectbox("Correct Option", [option1, option2, option3, option4])
-
-    if st.button("Add Quiz Question"):
-        if question and option1 and option2 and option3 and option4 and correct_option:
-            post_data(question, [option1, option2, option3, option4], correct_option)
+    tab1, tab2 = st.tabs(["Take Quiz", "Create Quiz"])
+    
+    with tab1:
+        st.header("Take Quiz")
+        quizzes = fetch_data("quiz")
+        
+        if quizzes:
+            for quiz in quizzes:
+                st.subheader(quiz['question'])
+                answer = st.radio("Select your answer:", quiz['choices'], key=f"quiz_{quiz['quizId']}")
+                
+                if st.button("Submit Answer", key=f"submit_{quiz['quizId']}"):
+                    if answer == quiz['correctOption']:
+                        st.success("Correct! 🎉")
+                        # Save quiz result
+                        result = {
+                            "quizId": quiz['quizId'],
+                            "userId": 1,  # Replace with actual user ID after authentication
+                            "score": 1
+                        }
+                        post_data("quiz/results", result)
+                    else:
+                        st.error("Incorrect! Try again.")
+                st.divider()
         else:
-            st.warning("Please fill in all fields.")
+            st.info("No quizzes available.")
 
-    # Display quizzes
-    st.subheader("Quiz Questions")
-    quizzes = fetch_data()
-    if quizzes:
-        for i, quiz in enumerate(quizzes, 1):
-            st.write(f"**Q{i}:** {quiz['question']}")
-            for j, option in enumerate(quiz["choices"], 1):
-                st.write(f"Option {j}: {option}")
-            selected_option = st.selectbox(f"Select your answer for Q{i}", quiz["choices"], key=f"select_{i}")
-            if st.button(f"Submit Answer for Q{i}", key=f"submit_{i}"):
-                if selected_option == quiz["correctOption"]:
-                    st.success("Correct!")
+    with tab2:
+        st.header("Create New Quiz")
+        with st.form("quiz_form"):
+            question = st.text_input("Question")
+            choice1 = st.text_input("Choice 1")
+            choice2 = st.text_input("Choice 2")
+            choice3 = st.text_input("Choice 3")
+            choice4 = st.text_input("Choice 4")
+            
+            choices = [choice1, choice2, choice3, choice4]
+            correct_option = st.selectbox("Correct Answer", choices)
+            
+            submitted = st.form_submit_button("Create Quiz")
+            if submitted:
+                if question and all(choices) and correct_option:
+                    quiz_data = {
+                        "question": question,
+                        "choices": choices,
+                        "correctOption": correct_option
+                    }
+                    if post_data("quiz", quiz_data):
+                        st.success("Quiz created successfully!")
                 else:
-                    st.error("Incorrect!")
-    else:
-        st.info("No quiz questions added yet.")
+                    st.error("Please fill in all fields.")
 
-quiz()
+        # Show created quizzes with delete option
+        st.header("Manage Quizzes")
+        quizzes = fetch_data("quiz")
+        if quizzes:
+            for quiz in quizzes:
+                col1, col2 = st.columns([3, 1])
+                with col1:
+                    st.write(f"**Q:** {quiz['question']}")
+                with col2:
+                    if st.button("Delete", key=f"delete_{quiz['quizId']}"):
+                        response = requests.delete(f"{BASE_URL}/quiz/{quiz['quizId']}")
+                        if response.status_code == 200:
+                            st.success("Quiz deleted successfully!")
+                            st.rerun()
+                st.divider()
+
+if __name__ == "__main__":
+    quiz()
